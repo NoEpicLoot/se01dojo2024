@@ -1,12 +1,12 @@
 # Se01dojo2024
 
-start interactive with
-`iex -S mix`
+start interactive with  
+`iex -S mix`  
 
-first import the game module...
-you have to keep a reference to the the gameboard variable by yourself.
-You can use the pipe operator to do so more easily.
-you can render the game status at any given time to the console, and keep going with the next move
+first import the game module...  
+you have to keep a reference to the the gameboard variable by yourself.  
+You can use the pipe operator to do so more easily.  
+you can render the game status at any given time to the console, and keep going with the next move  
 
 ```elixir
 alias E01Lightsout, as: Game
