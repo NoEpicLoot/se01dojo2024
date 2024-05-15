@@ -11,10 +11,21 @@ defmodule E01Lightsout do
   """
 
   @doc """
-  startGame/0 returns an empty game board
+  startGame/0 returns an empty 3x3 game board
   """
   def start do
     gameboard = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    gameboard
+  end
+  @doc """
+  startGame/1 returns an empty game board with the given size
+  """
+  def start(size) do
+    gameboard = Enum.map(1..size, fn _ ->
+      Enum.map(1..size, fn _ ->
+        0
+      end)
+    end)
     gameboard
   end
 

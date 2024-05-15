@@ -14,6 +14,21 @@ defmodule E01lightsoutTest do
            ]
   end
 
+  test "starting a game with size 5 renders a 3x3 grid with all lights off" do
+    result =
+      Game.start(5)
+      |> Game.render()
+
+    assert result == [
+             [0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0]
+           ]
+  end
+
+
   test "toggleLight updates the light at a given position" do
     result =
       Game.start()
