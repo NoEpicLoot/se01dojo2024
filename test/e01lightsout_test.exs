@@ -14,7 +14,7 @@ defmodule E01lightsoutTest do
            ]
   end
 
-  test "starting a game with size 5 renders a 3x3 grid with all lights off" do
+  test "starting a game with size 5 renders a 5x5 grid with all lights off" do
     result =
       Game.start(5)
       |> Game.render()
@@ -25,6 +25,17 @@ defmodule E01lightsoutTest do
              [0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0]
+           ]
+  end
+
+  test "starting a game with size 2x3 renders a 2x3 grid with all lights off" do
+    result =
+      Game.start(2,3)
+      |> Game.render()
+
+    assert result == [
+             [0, 0, 0],
+             [0, 0, 0]
            ]
   end
 
@@ -78,6 +89,34 @@ defmodule E01lightsoutTest do
              [0, 0, 0],
              [0, 0, 1],
              [0, 1, 1]
+           ]
+  end
+
+  test "doing a move on the edge of 6x6 field doesn't add out of bound fields" do
+    result =
+      Game.start(6)
+      |> Game.move(6, 6)
+      |> Game.render()
+
+    assert result == [
+             [0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 1],
+             [0, 0, 0, 0, 1, 1],
+           ]
+  end
+
+  test "doing a move on the edge of 2x3 field doesn't add out of bound fields" do
+    result =
+      Game.start(2,3)
+      |> Game.move(1, 1)
+      |> Game.render()
+
+    assert result == [
+             [1, 1, 0],
+             [1, 0, 0]
            ]
   end
 

@@ -14,8 +14,7 @@ defmodule E01Lightsout do
   startGame/0 returns an empty 3x3 game board
   """
   def start do
-    gameboard = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    gameboard
+    [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
   end
   @doc """
   startGame/1 returns an empty game board with the given size
@@ -29,14 +28,24 @@ defmodule E01Lightsout do
     gameboard
   end
 
+  @doc """
+  startGame/1 returns an empty game board with the given size
+  """
+  def start(rows, cols) do
+    gameboard = Enum.map(1..rows, fn _ ->
+      Enum.map(1..cols, fn _ ->
+        0
+      end)
+    end)
+    gameboard
+  end
+
   def move(gameboard, row, col) do
-    newBoard = toggleLight(gameboard, row, col)
-    newBoard = toggle_adjacent_neighbors(newBoard, row, col)
+    newBoard =
+      toggleLight(gameboard, row, col)
+      |> toggle_adjacent_neighbors(row, col)
+
     newBoard
-    # case newBoard do
-    #   [[1, 1, 1], [1, 1, 1], [1, 1, 1]] -> "Game Won"
-    #   _ -> newBoard
-    # end
   end
 
   ###################
@@ -44,61 +53,71 @@ defmodule E01Lightsout do
   def toggleLight(gameboard, row, col) do
     newBoard =
       case getLightStatus(gameboard, row, col) do
-        0 -> updateLight(gameboard, row, col, 1)
-        1 -> updateLight(gameboard, row, col, 0)
+        0 -> setLightStatus(gameboard, row, col, 1)
+        1 -> setLightStatus(gameboard, row, col, 0)
       end
 
     newBoard
   end
 
   def toggle_adjacent_neighbors(gameboard, row, col) do
-    newBoardUp = toggleLight(gameboard, max(1, row - 1), col)
-    newBoardDown = toggleLight(newBoardUp, min(3, row + 1), col)
-    newBoardLeft = toggleLight(newBoardDown, row, max(1, col - 1))
-    newBoard = toggleLight(newBoardLeft, row, min(3, col + 1))
+      newBoard =
+      toggleLight(gameboard, max(1, row - 1), col)
+      |> toggleLight(min(getBoardSize(gameboard), row + 1), col)
+      |> toggleLight(row, max(1, col - 1))
+      |> toggleLight(row, min(getBoardSize(gameboard), col + 1))
 
-    newBoard
-  end
-
-  defp updateLight(gameboard, row, col, val) do
-    row1 = Enum.at(gameboard, 0)
-    row2 = Enum.at(gameboard, 1)
-    row3 = Enum.at(gameboard, 2)
-
-    case row do
-      1 -> [updateRow(row1, col, val), row2, row3]
-      2 -> [row1, updateRow(row2, col, val), row3]
-      3 -> [row1, row2, updateRow(row3, col, val)]
+      newBoard
     end
+
+  defp setLightStatus(gameboard, row, col, val) do
+    ## authored by copilot
+    Enum.with_index(gameboard)
+    |> Enum.map(fn {row_data, index} ->
+      if index == row - 1 do
+        Enum.with_index(row_data)
+        |> Enum.map(fn {cell, idx} ->
+          if idx == col - 1 do
+            val
+          else
+            cell
+          end
+        end)
+      else
+        row_data
+      end
+    end)
   end
 
-  defp updateRow(row, col, val) do
-    col1 = Enum.at(row, 0)
-    col2 = Enum.at(row, 1)
-    col3 = Enum.at(row, 2)
-
-    case col do
-      1 -> [val, col2, col3]
-      2 -> [col1, val, col3]
-      3 -> [col1, col2, val]
-    end
-  end
 
   defp getLightStatus(gameboard, row, col) do
     Enum.at(Enum.at(gameboard, row - 1), col - 1)
   end
 
+  defp getBoardSize(gameboard) do
+    Enum.count(Enum.at(gameboard, 0))
+  end
+
+  defp won?(gameboard) do
+    # authored by copilot
+    Enum.all?(gameboard, fn row ->
+      Enum.all?(row, fn cell ->
+        cell == 1
+      end)
+    end)
+  end
+
   def render(gameboard) do
-    case gameboard do
-      [[1, 1, 1], [1, 1, 1], [1, 1, 1]] ->
+    case won?(gameboard) do
+      true ->
         IO.puts("Game Won")
         "Game Won"
 
-      _ ->
+      false ->
         gameboard
         |> Enum.each(fn row ->
-          IO.puts(Enum.join(row))
-          IO.puts("---")
+          IO.puts(Enum.join(row, "|"))
+          IO.puts("-" <> String.duplicate("-", Enum.count(row) * 2 - 1)) # string duplicate authored by copilot
         end)
 
         IO.puts("")
